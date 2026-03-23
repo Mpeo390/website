@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Product Catalog — GlobalMart</title>
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:Georgia,'Times New Roman',serif;background:#f8f6f2;color:#1a1a1a;line-height:1.7;overflow-x:hidden}
+img{max-width:100%;display:block;object-fit:cover}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+button{cursor:pointer;font-family:inherit}
+p{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:0.95rem;color:#444;line-height:1.75}
+
+/* NAV */
+nav{background:#fff;border-bottom:1px solid #e5e0d8;padding:0 2rem;position:sticky;top:0;z-index:400}
+.nav-in{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;height:64px;gap:1.5rem}
+.nav-logo{font-size:1.4rem;font-weight:700;color:#1a1a1a;letter-spacing:-0.5px;flex-shrink:0}
+.nav-logo span{color:#c0392b}
+.nav-links{display:flex;align-items:center;gap:0.15rem}
+.nav-links a{padding:0.4rem 0.9rem;border-radius:6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.88rem;font-weight:500;color:#555;transition:0.2s}
+.nav-links a:hover{background:#f0ede8;color:#1a1a1a}
+.nav-links a.active{background:#1a1a1a;color:#fff}
+.nav-r{display:flex;align-items:center;gap:0.75rem;flex-shrink:0}
+.curr-lbl{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.78rem;font-weight:700;background:#c0392b;color:#fff;padding:0.26rem 0.75rem;border-radius:4px;letter-spacing:0.04em}
+.cart-btn{position:relative;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.85rem;font-weight:600;background:#fff;color:#1a1a1a;border:1.5px solid #1a1a1a;padding:0.4rem 1rem;border-radius:6px;cursor:pointer;transition:0.2s}
+.cart-btn:hover{background:#1a1a1a;color:#fff}
+.cart-count{position:absolute;top:-6px;right:-6px;background:#c0392b;color:#fff;font-size:0.62rem;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:sans-serif;display:none}
+.user-btn{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.84rem;font-weight:600;background:#1a1a1a;color:#fff;border:none;padding:0.4rem 1rem;border-radius:6px;cursor:pointer;transition:0.2s}
+.user-btn:hover{background:#c0392b}
+
+/* CART SIDEBAR */
+.cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.42);z-index:800}
+.cart-overlay.open{display:block}
+.cart-side{position:fixed;top:0;right:-440px;width:420px;height:100vh;background:#fff;border-left:1px solid #e5e0d8;z-index:801;transition:right 0.3s ease;display:flex;flex-direction:column;box-shadow:-4px 0 20px rgba(0,0,0,0.1)}
+.cart-side.open{right:0}
+.cart-head{padding:1.2rem 1.5rem;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;background:#1a1a1a;color:#fff}
+.cart-head h3{font-size:1rem;font-weight:700}
+.cart-close{background:transparent;border:none;color:#fff;font-size:1.4rem;cursor:pointer;line-height:1}
+.cart-body{flex:1;overflow-y:auto;padding:1rem 1.5rem}
+.cart-empty{text-align:center;padding:3rem 1rem;color:#888;font-family:sans-serif;font-size:0.9rem}
+.cart-item{display:flex;gap:1rem;padding:1rem 0;border-bottom:1px solid #f0ede8;align-items:flex-start}
+.ci-img{width:68px;height:68px;object-fit:cover;border-radius:6px;border:1px solid #eee;flex-shrink:0}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:0.87rem;font-weight:700;margin-bottom:0.2rem;font-family:sans-serif;color:#1a1a1a}
+.ci-origin{font-size:0.7rem;color:#999;font-family:sans-serif;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.4rem}
+.ci-price{font-size:0.9rem;font-weight:700;color:#c0392b}
+.ci-qty{display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem}
+.q-btn{width:26px;height:26px;border:1.5px solid #ddd;background:#f8f6f2;border-radius:4px;font-size:0.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.15s}
+.q-btn:hover{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.q-val{font-size:0.87rem;font-weight:700;min-width:20px;text-align:center;font-family:sans-serif}
+.ci-rm{background:none;border:none;color:#ccc;font-size:1rem;cursor:pointer;margin-left:auto;padding:0.2rem;transition:0.15s;line-height:1}
+.ci-rm:hover{color:#c0392b}
+.cart-foot{padding:1.25rem 1.5rem;border-top:1px solid #eee;background:#f8f6f2}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem}
+.cart-total-row span{font-family:sans-serif;font-size:0.87rem;color:#666}
+.cart-total-row strong{font-size:1.1rem;font-weight:700}
+.cart-note{font-family:sans-serif;font-size:0.78rem;color:#888;margin-bottom:1rem;line-height:1.5;text-align:center}
+
+/* ORDER BUTTONS - no card form, just contact methods */
+.btn-whatsapp{width:100%;background:#25D366;color:#fff;border:none;padding:0.85rem;font-size:0.88rem;font-weight:700;border-radius:6px;cursor:pointer;margin-bottom:0.6rem;transition:0.2s;font-family:sans-serif}
+.btn-whatsapp:hover{background:#1ebe5d}
+.btn-email-order{width:100%;background:#fff;color:#1a1a1a;border:1.5px solid #1a1a1a;padding:0.85rem;font-size:0.88rem;font-weight:600;border-radius:6px;cursor:pointer;margin-bottom:0.6rem;transition:0.2s;font-family:sans-serif}
+.btn-email-order:hover{background:#1a1a1a;color:#fff}
+.btn-continue{width:100%;background:transparent;color:#888;border:none;padding:0.5rem;font-size:0.83rem;font-family:sans-serif;cursor:pointer;transition:0.2s}
+.btn-continue:hover{color:#1a1a1a}
+
+/* HERO */
+.hero{background:#1a1a1a;color:#f8f6f2;padding:5.5rem 2rem 4.5rem;border-bottom:1px solid #333;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-150px;right:-150px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(192,57,43,0.2) 0%,transparent 65%);pointer-events:none}
+.hero-in{max-width:1200px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;z-index:1}
+.hero-label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#e88070;margin-bottom:1.2rem;display:block}
+.hero h1{font-size:clamp(2.4rem,5vw,4.5rem);font-weight:700;line-height:0.98;letter-spacing:-2px;margin-bottom:1.75rem}
+.hero h1 em{color:#c0392b;font-style:italic}
+.hero-desc{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:rgba(248,246,242,0.52);font-size:1rem;max-width:400px;margin-bottom:2.5rem;line-height:1.75}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-hero-p{background:#c0392b;color:#fff;border:2px solid #c0392b;padding:0.82rem 2rem;border-radius:6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.9rem;font-weight:700;transition:0.2s;display:inline-block}
+.btn-hero-p:hover{background:transparent;color:#e88070;border-color:#e88070}
+.btn-hero-s{background:transparent;color:#f8f6f2;border:2px solid rgba(248,246,242,0.28);padding:0.82rem 2rem;border-radius:6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.9rem;font-weight:500;transition:0.2s;display:inline-block}
+.btn-hero-s:hover{border-color:#f8f6f2}
+.hero-img{border-radius:10px;overflow:hidden;border:1px solid rgba(248,246,242,0.1)}
+.hero-img img{width:100%;height:440px}
+.kpis{display:flex;gap:2.5rem;flex-wrap:wrap;border-top:1px solid rgba(248,246,242,0.12);padding-top:2rem;margin-top:2rem}
+.kpi-n{font-size:1.8rem;font-weight:700;color:#f8f6f2}
+.kpi-l{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.7rem;color:rgba(248,246,242,0.35);text-transform:uppercase;letter-spacing:0.07em}
+
+/* TICKER */
+.ticker{background:#c0392b;color:#fff;padding:0.55rem 0;overflow:hidden;border-bottom:1px solid #a93226}
+.tick-track{display:flex;gap:3rem;white-space:nowrap;animation:tick 30s linear infinite;width:max-content}
+.tick-item{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.76rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
+.tick-item::after{content:' /';opacity:0.5;margin-left:3rem}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTIONS */
+section{padding:4.5rem 2rem}
+.sec-in{max-width:1200px;margin:auto}
+.sec-label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c0392b;display:block;margin-bottom:0.65rem}
+.sec-title{font-size:clamp(1.7rem,3.2vw,2.7rem);font-weight:700;letter-spacing:-1.2px;line-height:1.08;margin-bottom:0.9rem}
+.sec-sub{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#666;max-width:540px;margin-bottom:2.5rem;font-size:0.95rem}
+
+/* PRODUCT CARDS */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:1.5rem}
+.pcard{background:#fff;border:1px solid #e5e0d8;border-radius:8px;overflow:hidden;transition:0.22s}
+.pcard:hover{box-shadow:0 6px 22px rgba(0,0,0,0.09);border-color:#ccc;transform:translateY(-2px)}
+.pcard-img{aspect-ratio:4/3;overflow:hidden;background:#f0ede8;position:relative}
+.pcard-img img{width:100%;height:100%;transition:transform 0.4s}
+.pcard:hover .pcard-img img{transform:scale(1.05)}
+.pbadge{position:absolute;top:0.75rem;left:0.75rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.64rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:3px;color:#fff}
+.pb-red{background:#c0392b}.pb-teal{background:#1a7a5e}.pb-gold{background:#b7760d;color:#fff}.pb-dark{background:#2c2c2c}
+.pcard-body{padding:1.2rem}
+.pcard-origin{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#999;margin-bottom:0.28rem}
+.pcard-name{font-size:1rem;font-weight:700;margin-bottom:0.28rem;line-height:1.3;letter-spacing:-0.2px}
+.pcard-desc{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.81rem;color:#666;margin-bottom:0.9rem;line-height:1.5}
+.pcard-foot{display:flex;align-items:center;justify-content:space-between;gap:0.5rem}
+.pcard-price{font-size:1.2rem;font-weight:700;letter-spacing:-0.3px}
+.pcard-orig{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.74rem;color:#bbb;text-decoration:line-through}
+.btn-atc{background:#1a1a1a;color:#fff;border:none;padding:0.48rem 0.95rem;border-radius:5px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;transition:0.2s;white-space:nowrap}
+.btn-atc:hover{background:#c0392b}
+.btn-atc.added{background:#1a7a5e}
+
+/* PAGE HEADER */
+.ph{background:#1a1a1a;color:#f8f6f2;padding:4.5rem 2rem 3rem;border-bottom:1px solid #333}
+.ph-in{max-width:1200px;margin:auto}
+.breadcrumb{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.78rem;color:rgba(248,246,242,0.35);margin-bottom:0.8rem;display:flex;gap:0.4rem;flex-wrap:wrap}
+.breadcrumb a{color:#e88070}
+.ph h1{font-size:clamp(2rem,4.5vw,3.5rem);font-weight:700;letter-spacing:-2px;line-height:1;margin-bottom:0.7rem}
+.ph p{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:rgba(248,246,242,0.5);max-width:480px}
+
+/* FILTERS */
+.filters{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.f-btn{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:0.45rem 1.15rem;border-radius:5px;border:1.5px solid #ddd;background:#fff;color:#555;font-size:0.82rem;font-weight:600;cursor:pointer;transition:0.2s}
+.f-btn:hover,.f-btn.on{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
+
+/* INFO CARDS */
+.ic{background:#fff;border:1px solid #e5e0d8;border-radius:8px;padding:1.5rem;transition:0.2s}
+.ic:hover{box-shadow:0 2px 12px rgba(0,0,0,0.07)}
+.ic h3{font-size:0.95rem;font-weight:700;margin-bottom:0.6rem}
+.ic p{font-size:0.86rem;line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#555}
+.ic.t-red{border-left:3px solid #c0392b}.ic.t-teal{border-left:3px solid #1a7a5e}.ic.t-gold{border-left:3px solid #b7760d}.ic.t-dark{border-left:3px solid #1a1a1a}.ic.t-blue{border-left:3px solid #1a5e8a}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+.gauto{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.25rem}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:8px;border:1px solid #e5e0d8}
+table{width:100%;border-collapse:collapse;background:#fff}
+thead{background:#1a1a1a;color:#fff}
+th{padding:0.85rem 1rem;text-align:left;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase}
+td{padding:0.85rem 1rem;border-bottom:1px solid #f0ede8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.87rem;color:#333}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8f6f2}
+.badge{font-family:sans-serif;display:inline-block;padding:0.18rem 0.6rem;border-radius:3px;font-size:0.7rem;font-weight:700}
+.b-green{color:#1a7a5e;background:#e6f5f0}.b-yellow{color:#8a5e0d;background:#fef3d6}.b-blue{color:#1a5e8a;background:#e0edf5}
+
+/* VIDEO */
+.vid{border-radius:8px;overflow:hidden;border:1px solid #e5e0d8;aspect-ratio:16/9}
+.vid iframe{width:100%;height:100%;display:block}
+
+/* CHECKLIST */
+.chk{display:flex;flex-direction:column;gap:0.65rem}
+.chk li{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;gap:0.7rem;align-items:flex-start;font-size:0.92rem;color:#444}
+.chk li::before{content:'';width:18px;height:18px;border-radius:50%;flex-shrink:0;margin-top:0.22rem;background:#1a1a1a;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center;background-size:11px}
+
+/* COUNTRY CHIPS */
+.ctry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:0.85rem}
+.chip{background:#fff;border:1px solid #e5e0d8;border-radius:6px;padding:0.9rem;text-align:center;transition:0.2s}
+.chip:hover{border-color:#1a1a1a}
+.chip .fl{font-size:1.8rem;margin-bottom:0.25rem}
+.chip .cn{font-family:sans-serif;font-size:0.82rem;font-weight:700}
+.chip .cc{font-family:sans-serif;font-size:0.68rem;color:#999;margin-top:0.1rem}
+
+/* DARK SECTION */
+.dark{background:#1a1a1a;color:#f8f6f2;border-top:1px solid #333;border-bottom:1px solid #333}
+.dk{background:rgba(248,246,242,0.06);border:1px solid rgba(248,246,242,0.12);border-radius:8px;padding:1.5rem}
+.dk h3{color:#f8f6f2;font-size:0.95rem;font-weight:700;margin-bottom:0.5rem}
+.dk p{color:rgba(248,246,242,0.5);font-size:0.84rem;font-family:sans-serif;line-height:1.65}
+
+/* BAND */
+.band{background:#1a7a5e;border-top:1px solid #155e49;border-bottom:1px solid #155e49;padding:0.58rem 2rem;text-align:center;font-family:sans-serif;font-size:0.8rem;font-weight:600;color:#fff;letter-spacing:0.05em}
+
+/* FORMS */
+.form-box{background:#fff;border:1px solid #e5e0d8;border-radius:8px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.fg{margin-bottom:1.1rem}
+.fg label{display:block;font-family:sans-serif;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.38rem;color:#555}
+.fg input,.fg select,.fg textarea{width:100%;border:1.5px solid #ddd;border-radius:6px;padding:0.74rem 0.95rem;font-family:sans-serif;font-size:0.93rem;color:#1a1a1a;background:#fff;transition:0.2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:#1a1a1a}
+.fg textarea{resize:vertical;min-height:120px}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.btn-submit{width:100%;background:#c0392b;color:#fff;border:none;border-radius:6px;padding:0.88rem;font-family:sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:0.2s}
+.btn-submit:hover{background:#a93226}
+.btn-prim{display:inline-block;background:#1a1a1a;color:#f8f6f2;padding:0.72rem 1.8rem;border-radius:6px;font-family:sans-serif;font-weight:700;font-size:0.88rem;border:none;cursor:pointer;transition:0.2s}
+.btn-prim:hover{background:#c0392b}
+.btn-sec{display:inline-block;background:transparent;color:#1a1a1a;padding:0.72rem 1.8rem;border-radius:6px;font-family:sans-serif;font-weight:600;font-size:0.88rem;border:1.5px solid #1a1a1a;cursor:pointer;transition:0.2s}
+.btn-sec:hover{background:#1a1a1a;color:#f8f6f2}
+
+/* GALLERY */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.gal-item{border-radius:8px;overflow:hidden;aspect-ratio:1;border:1px solid #e5e0d8}
+.gal-item img{width:100%;height:100%;transition:transform 0.35s}
+.gal-item:hover img{transform:scale(1.03)}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1a1a1a;color:#fff;padding:0.9rem 1.3rem;border-radius:8px;font-family:sans-serif;font-size:0.85rem;z-index:9000;transform:translateY(100px);opacity:0;transition:all 0.3s cubic-bezier(.34,1.56,.64,1);max-width:300px;box-shadow:0 8px 24px rgba(0,0,0,0.2);pointer-events:none;border-left:3px solid #c0392b}
+.toast.on{transform:translateY(0);opacity:1}
+
+/* FOOTER */
+footer{background:#1a1a1a;color:#f8f6f2;padding:4rem 2rem 2rem}
+.ft-in{max-width:1200px;margin:auto}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.ft-logo{font-size:1.35rem;font-weight:700;letter-spacing:-0.3px;margin-bottom:0.6rem}
+.ft-logo span{color:#c0392b}
+.ft-tag{font-family:sans-serif;color:rgba(248,246,242,0.38);font-size:0.85rem;max-width:240px;line-height:1.6}
+.ft-curr{font-family:sans-serif;color:rgba(248,246,242,0.28);font-size:0.73rem;margin-top:0.3rem}
+.ft-col h4{font-family:sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(248,246,242,0.35);margin-bottom:1.1rem}
+.ft-col ul{display:flex;flex-direction:column;gap:0.5rem}
+.ft-col ul li a{font-family:sans-serif;color:rgba(248,246,242,0.58);font-size:0.87rem;transition:0.2s}
+.ft-col ul li a:hover{color:#e88070}
+.ft-bot{border-top:1px solid rgba(248,246,242,0.1);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.ft-bot p{font-family:sans-serif;color:rgba(248,246,242,0.28);font-size:0.78rem}
+.socials{display:flex;gap:0.5rem}
+.socials a{font-family:sans-serif;font-size:0.7rem;font-weight:700;color:rgba(248,246,242,0.38);border:1px solid rgba(248,246,242,0.16);border-radius:4px;padding:0.25rem 0.55rem;transition:0.2s}
+.socials a:hover{color:#e88070;border-color:#e88070}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fadeUp 0.5s ease forwards}
+.d1{animation-delay:0.08s;opacity:0}.d2{animation-delay:0.18s;opacity:0}.d3{animation-delay:0.28s;opacity:0}.d4{animation-delay:0.38s;opacity:0}
+
+/* HOW TO ORDER BOX */
+.order-box{background:#f0ede8;border:1px solid #e5e0d8;border-radius:8px;padding:1.5rem;margin-top:1rem}
+.order-box h4{font-size:0.88rem;font-weight:700;margin-bottom:0.75rem;font-family:sans-serif}
+.order-step{display:flex;gap:0.75rem;align-items:flex-start;margin-bottom:0.6rem;font-family:sans-serif;font-size:0.84rem;color:#555}
+.step-num{width:22px;height:22px;border-radius:50%;background:#1a1a1a;color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.1rem}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-in,.g2{grid-template-columns:1fr;gap:2rem}
+  .g3,.g4{grid-template-columns:1fr 1fr}
+  .ft-grid{grid-template-columns:1fr 1fr}
+  .hero{padding:3.5rem 2rem}
+}
+@media(max-width:640px){
+  .nav-links{display:none}
+  .g3,.g4{grid-template-columns:1fr}
+  .ft-grid{grid-template-columns:1fr;gap:2rem}
+  .cart-side{width:100%;right:-100%}
+  .hero h1{font-size:2.4rem}
+  .f-row{grid-template-columns:1fr}
+  .gallery{grid-template-columns:1fr 1fr}
+}</style>
+</head>
+<body>
+<nav>
+  <div class="nav-in">
+    <a href="index.html" class="nav-logo">GlobalMart<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" id="nl-home">Home</a></li>
+      <li><a href="catalog.html" id="nl-catalog">Catalog</a></li>
+      <li><a href="about.html" id="nl-about">About</a></li>
+      <li><a href="shipping.html" id="nl-shipping">Shipping</a></li>
+      <li><a href="contact.html" id="nl-contact">Contact</a></li>
+    </ul>
+    <div class="nav-r">
+      <span class="curr-lbl">USD 🌍</span>
+      <button class="cart-btn" onclick="openCart()">Cart <span class="cart-count">0</span></button>
+      <button class="user-btn" onclick="logout()"><span class="uname">Account</span> / Sign out</button>
+    </div>
+  </div>
+</nav>
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-side" id="cart-side">
+  <div class="cart-head">
+    <h3>Your Cart</h3>
+    <button class="cart-close" onclick="closeCart()">&#x2715;</button>
+  </div>
+  <div class="cart-body" id="cart-items">
+    <div class="cart-empty">Your cart is empty.</div>
+  </div>
+  <div class="cart-foot">
+    <div class="cart-total-row">
+      <span>Estimated Total</span>
+      <strong id="cart-total">$0.00</strong>
+    </div>
+    <p class="cart-note">To place your order, send us your cart via WhatsApp or email. We will confirm availability, shipping cost and arrange payment.</p>
+    <a id="wa-order-btn" href="#" class="btn-whatsapp" onclick="buildOrderLinks()">Order via WhatsApp</a>
+    <a id="email-order-btn" href="#" class="btn-email-order" onclick="buildOrderLinks()">Order via Email</a>
+    <button class="btn-continue" onclick="closeCart()">Continue Shopping</button>
+    <div class="order-box">
+      <h4>How Ordering Works</h4>
+      <div class="order-step"><span class="step-num">1</span><span>Add products to your cart and review your selections</span></div>
+      <div class="order-step"><span class="step-num">2</span><span>Click WhatsApp or Email to send us your order list</span></div>
+      <div class="order-step"><span class="step-num">3</span><span>We confirm stock, calculate shipping to your country and send you a payment link</span></div>
+      <div class="order-step"><span class="step-num">4</span><span>Pay securely and we dispatch your order with full tracking</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="ticker"><div class="tick-track">
+  <span class="tick-item">Add to cart then order via WhatsApp or email</span>
+  <span class="tick-item">80+ countries of origin</span>
+  <span class="tick-item">Authenticity guaranteed</span>
+  <span class="tick-item">Prices shown in your local currency</span>
+  <span class="tick-item">Add to cart then order via WhatsApp or email</span>
+  <span class="tick-item">80+ countries of origin</span>
+  <span class="tick-item">Authenticity guaranteed</span>
+  <span class="tick-item">Prices shown in your local currency</span>
+</div></div>
+
+<div class="ph"><div class="ph-in">
+  <div class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Product Catalog</span></div>
+  <h1>Product Catalog</h1>
+  <p>Over 15,000 products from 80+ countries. Add items to your cart, then send your order to us by WhatsApp or email.</p>
+</div></div>
+
+<section><div class="sec-in">
+  <div class="filters">
+    <button class="f-btn on" onclick="filt(this,'all')">All Products</button>
+    <button class="f-btn" onclick="filt(this,'fashion')">Fashion</button>
+    <button class="f-btn" onclick="filt(this,'electronics')">Electronics</button>
+    <button class="f-btn" onclick="filt(this,'beauty')">Beauty</button>
+    <button class="f-btn" onclick="filt(this,'accessories')">Accessories</button>
+    <button class="f-btn" onclick="filt(this,'food')">Food and Gourmet</button>
+  </div>
+
+  <div class="prod-grid" id="grid">
+    <div class="pcard" data-c="accessories"><div class="pcard-img"><span class="pbadge pb-red">HOT</span><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&h=380&fit=crop" alt="Swiss Watch"></div><div class="pcard-body"><div class="pcard-origin">Accessories · Switzerland</div><div class="pcard-name">Swiss Precision Timepiece</div><div class="pcard-desc">Handcrafted Swiss movement. Water resistant to 100m. Sapphire crystal glass.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="289">$289</span></div><div class="pcard-orig"><span data-usd="349">$349</span></div></div><button class="btn-atc" id="atc-p1" onclick="addToCart('p1','Swiss Precision Timepiece','Accessories · Switzerland',289,'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="beauty"><div class="pcard-img"><span class="pbadge pb-teal">NEW</span><img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=500&h=380&fit=crop" alt="K-Beauty"></div><div class="pcard-body"><div class="pcard-origin">Beauty · South Korea</div><div class="pcard-name">K-Beauty Glow Routine Set</div><div class="pcard-desc">7-step Korean skincare routine with hyaluronic acid and snail mucin serum.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="74">$74</span></div><div class="pcard-orig"><span data-usd="99">$99</span></div></div><button class="btn-atc" id="atc-p2" onclick="addToCart('p2','K-Beauty Glow Routine Set','Beauty · South Korea',74,'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="fashion"><div class="pcard-img"><span class="pbadge pb-gold">TOP</span><img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=500&h=380&fit=crop" alt="Shoes"></div><div class="pcard-body"><div class="pcard-origin">Footwear · Italy</div><div class="pcard-name">Italian Leather Runners</div><div class="pcard-desc">Full-grain Italian leather, hand-stitched by artisans in Florence. Limited stock.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="195">$195</span></div><div class="pcard-orig"><span data-usd="250">$250</span></div></div><button class="btn-atc" id="atc-p3" onclick="addToCart('p3','Italian Leather Runners','Footwear · Italy',195,'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="fashion"><div class="pcard-img"><span class="pbadge pb-dark">SALE</span><img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&h=380&fit=crop" alt="Bag"></div><div class="pcard-body"><div class="pcard-origin">Fashion · France</div><div class="pcard-name">Parisian Tote Bag</div><div class="pcard-desc">Structured canvas tote with genuine leather handles. Monogramming available.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="139">$139</span></div><div class="pcard-orig"><span data-usd="179">$179</span></div></div><button class="btn-atc" id="atc-p4" onclick="addToCart('p4','Parisian Tote Bag','Fashion · France',139,'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="food"><div class="pcard-img"><span class="pbadge pb-teal">RARE</span><img src="https://images.unsplash.com/photo-1531968455001-5c5272a41129?w=500&h=380&fit=crop" alt="Matcha"></div><div class="pcard-body"><div class="pcard-origin">Food and Gourmet · Japan</div><div class="pcard-name">Kyoto Matcha Premium Set</div><div class="pcard-desc">Ceremonial grade matcha from Uji, Kyoto. Includes bamboo whisk and ceramic bowl.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="58">$58</span></div><div class="pcard-orig"><span data-usd="75">$75</span></div></div><button class="btn-atc" id="atc-p5" onclick="addToCart('p5','Kyoto Matcha Premium Set','Food and Gourmet · Japan',58,'https://images.unsplash.com/photo-1531968455001-5c5272a41129?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="electronics"><div class="pcard-img"><span class="pbadge pb-dark">TECH</span><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=380&fit=crop" alt="Headphones"></div><div class="pcard-body"><div class="pcard-origin">Electronics · Germany</div><div class="pcard-name">Berlin ANC Headphones</div><div class="pcard-desc">30-hour battery life, adaptive noise cancellation, premium German audio engineering.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="229">$229</span></div><div class="pcard-orig"><span data-usd="299">$299</span></div></div><button class="btn-atc" id="atc-p6" onclick="addToCart('p6','Berlin ANC Headphones','Electronics · Germany',229,'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="fashion"><div class="pcard-img"><span class="pbadge pb-gold">ARTISAN</span><img src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=500&h=380&fit=crop" alt="Silk Scarf"></div><div class="pcard-body"><div class="pcard-origin">Fashion · India</div><div class="pcard-name">Varanasi Silk Scarf</div><div class="pcard-desc">Hand-woven pure silk from Varanasi. Traditional Banarasi brocade patterns throughout.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="89">$89</span></div><div class="pcard-orig"><span data-usd="120">$120</span></div></div><button class="btn-atc" id="atc-p7" onclick="addToCart('p7','Varanasi Silk Scarf','Fashion · India',89,'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="food"><div class="pcard-img"><span class="pbadge pb-teal">ORGANIC</span><img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&h=380&fit=crop" alt="Olive Oil"></div><div class="pcard-body"><div class="pcard-origin">Food and Gourmet · Greece</div><div class="pcard-name">Cretan Extra Virgin Olive Oil</div><div class="pcard-desc">Cold-pressed from century-old Cretan olive trees. PDO certified, award-winning.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="42">$42</span></div><div class="pcard-orig"><span data-usd="55">$55</span></div></div><button class="btn-atc" id="atc-p8" onclick="addToCart('p8','Cretan Extra Virgin Olive Oil','Food and Gourmet · Greece',42,'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="beauty"><div class="pcard-img"><span class="pbadge pb-red">POPULAR</span><img src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=500&h=380&fit=crop" alt="Perfume"></div><div class="pcard-body"><div class="pcard-origin">Beauty · France</div><div class="pcard-name">Provence Rose Perfume</div><div class="pcard-desc">Crafted from roses grown in Grasse, France. Fresh floral scent with warm base notes.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="118">$118</span></div><div class="pcard-orig"><span data-usd="155">$155</span></div></div><button class="btn-atc" id="atc-p9" onclick="addToCart('p9','Provence Rose Perfume','Beauty · France',118,'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="electronics"><div class="pcard-img"><span class="pbadge pb-dark">NEW</span><img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?w=500&h=380&fit=crop" alt="Camera"></div><div class="pcard-body"><div class="pcard-origin">Electronics · Japan</div><div class="pcard-name">Compact Digital Camera</div><div class="pcard-desc">24MP sensor, 4K video recording, lightweight design for travel photography.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="345">$345</span></div><div class="pcard-orig"><span data-usd="420">$420</span></div></div><button class="btn-atc" id="atc-p10" onclick="addToCart('p10','Compact Digital Camera','Electronics · Japan',345,'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="accessories"><div class="pcard-img"><span class="pbadge pb-gold">CRAFT</span><img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&h=380&fit=crop" alt="Leather Bag"></div><div class="pcard-body"><div class="pcard-origin">Accessories · Morocco</div><div class="pcard-name">Moroccan Leather Satchel</div><div class="pcard-desc">Hand-tooled genuine leather. Traditional Fes craftsmanship. Fully lined interior.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="165">$165</span></div><div class="pcard-orig"><span data-usd="210">$210</span></div></div><button class="btn-atc" id="atc-p11" onclick="addToCart('p11','Moroccan Leather Satchel','Accessories · Morocco',165,'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+
+    <div class="pcard" data-c="food"><div class="pcard-img"><span class="pbadge pb-teal">SINGLE ORIGIN</span><img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=500&h=380&fit=crop" alt="Coffee"></div><div class="pcard-body"><div class="pcard-origin">Food and Gourmet · Ethiopia</div><div class="pcard-name">Ethiopian Yirgacheffe Coffee</div><div class="pcard-desc">Single origin, naturally processed. Notes of blueberry and jasmine. Light roast.</div><div class="pcard-foot"><div><div class="pcard-price"><span data-usd="32">$32</span></div><div class="pcard-orig"><span data-usd="42">$42</span></div></div><button class="btn-atc" id="atc-p12" onclick="addToCart('p12','Ethiopian Yirgacheffe Coffee','Food and Gourmet · Ethiopia',32,'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=120&h=120&fit=crop')">Add to Cart</button></div></div></div>
+  </div>
+
+  <!-- PRICING TIERS -->
+  <div style="margin-top:5rem">
+    <span class="sec-label">Shop by Budget</span>
+    <h2 class="sec-title">Price Ranges</h2>
+    <p class="sec-sub">All prices displayed in your local currency as set at login. Ranges below are USD equivalent.</p>
+    <div class="g4" style="margin-top:1.5rem">
+      <div class="ic t-blue" style="text-align:center"><p style="font-family:Georgia,serif;font-size:1.4rem;font-weight:700;color:#1a5e8a;margin-bottom:0.4rem">Under $50</p><p>Gifts, Gourmet and Beauty Essentials</p></div>
+      <div class="ic t-teal" style="text-align:center"><p style="font-family:Georgia,serif;font-size:1.4rem;font-weight:700;color:#1a7a5e;margin-bottom:0.4rem">$50 to $150</p><p>Fashion, Accessories and Electronics</p></div>
+      <div class="ic t-gold" style="text-align:center"><p style="font-family:Georgia,serif;font-size:1.4rem;font-weight:700;color:#b7760d;margin-bottom:0.4rem">$150 to $300</p><p>Luxury Goods and Premium Collections</p></div>
+      <div class="ic t-red" style="text-align:center"><p style="font-family:Georgia,serif;font-size:1.4rem;font-weight:700;color:#c0392b;margin-bottom:0.4rem">$300 and above</p><p>Fine Jewellery and Exclusive Items</p></div>
+    </div>
+  </div>
+
+  <!-- HOW TO ORDER NOTE -->
+  <div style="margin-top:4rem;background:#fff;border:1px solid #e5e0d8;border-radius:8px;padding:2rem;display:flex;gap:2rem;align-items:flex-start;flex-wrap:wrap">
+    <div style="flex:1;min-width:240px">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.6rem">Ready to order?</h3>
+      <p style="font-size:0.88rem;color:#666;font-family:sans-serif;line-height:1.65">Add your chosen products to the cart using the buttons above. When you are ready, open the cart and click WhatsApp or Email Order to send us your list. We will reply with confirmation and a secure payment link.</p>
+    </div>
+    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center">
+      <button onclick="openCart()" class="btn-prim">View My Cart</button>
+      <a href="contact.html" class="btn-sec">Contact Us</a>
+    </div>
+  </div>
+</div></section>
+
+<footer>
+  <div class="ft-in">
+    <div class="ft-grid">
+      <div>
+        <div class="ft-logo">GlobalMart<span>.</span></div>
+        <p class="ft-tag">Your gateway to the world's finest products, delivered anywhere on the globe.</p>
+        <p class="ft-curr">Prices shown in US Dollar (USD)</p>
+      </div>
+      <div class="ft-col"><h4>Shop</h4><ul><li><a href="catalog.html">All Products</a></li><li><a href="catalog.html">New Arrivals</a></li><li><a href="catalog.html">Best Sellers</a></li><li><a href="catalog.html">Sale Items</a></li></ul></div>
+      <div class="ft-col"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="about.html">Our Partners</a></li><li><a href="contact.html">Careers</a></li></ul></div>
+      <div class="ft-col"><h4>Support</h4><ul><li><a href="shipping.html">Shipping Information</a></li><li><a href="contact.html">Contact Us</a></li><li><a href="shipping.html">Returns Policy</a></li><li><a href="login.html">Sign In / Out</a></li></ul></div>
+    </div>
+    <div class="ft-bot">
+      <p>2025 GlobalMart International Ltd. All rights reserved.</p>
+      <div class="socials"><a href="#">Facebook</a><a href="#">Twitter</a><a href="#">Instagram</a></div>
+    </div>
+  </div>
+</footer>
+<div class="toast" id="toast"></div>
+<script>
+// ── CURRENCY ─────────────────────────────────────────
+var C={code:'USD',symbol:'$',rate:1,name:'US Dollar',flag:'🌍'};
+var USER=null;
+function fmt(usd){
+  var v=usd*C.rate,s;
+  if(v>=100000)s=Math.round(v).toLocaleString();
+  else if(v>=1000)s=Math.round(v).toLocaleString();
+  else if(v>=10)s=v.toFixed(0);
+  else s=v.toFixed(2);
+  return C.symbol+s;
+}
+function applyPrices(){document.querySelectorAll('[data-usd]').forEach(function(el){el.textContent=fmt(parseFloat(el.dataset.usd));});}
+function updateCurrUI(){
+  document.querySelectorAll('.curr-lbl').forEach(function(el){el.textContent=C.code+' '+C.flag;});
+  document.querySelectorAll('.ft-curr').forEach(function(el){el.textContent='Prices shown in '+C.name+' ('+C.code+')';});
+  if(USER){document.querySelectorAll('.uname').forEach(function(el){el.textContent=USER.name;});}
+  refreshCartUI();
+}
+function logout(){localStorage.removeItem('gm_user');localStorage.removeItem('gm_curr');window.location.href='login.html';}
+function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.innerHTML=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},4500);}
+
+// ── CART ─────────────────────────────────────────────
+var cart=[];
+function loadCart(){try{var s=localStorage.getItem('gm_cart');if(s)cart=JSON.parse(s);}catch(e){cart=[];}}
+function saveCart(){localStorage.setItem('gm_cart',JSON.stringify(cart));}
+function cartTotal(){return cart.reduce(function(a,i){return a+(i.price*i.qty);},0);}
+function cartCount(){return cart.reduce(function(a,i){return a+i.qty;},0);}
+
+function addToCart(id,name,origin,price,img){
+  loadCart();
+  var ex=cart.find(function(x){return x.id===id;});
+  if(ex){ex.qty++;}else{cart.push({id:id,name:name,origin:origin,price:price,img:img,qty:1});}
+  saveCart();
+  updateCartBadge();
+  showToast('<strong>'+name+'</strong> added to cart');
+  var btn=document.getElementById('atc-'+id);
+  if(btn){btn.textContent='Added';btn.classList.add('added');setTimeout(function(){btn.textContent='Add to Cart';btn.classList.remove('added');},1500);}
+}
+function removeFromCart(id){loadCart();cart=cart.filter(function(x){return x.id!==id;});saveCart();refreshCartUI();}
+function changeQty(id,d){loadCart();var item=cart.find(function(x){return x.id===id;});if(item){item.qty+=d;if(item.qty<=0)cart=cart.filter(function(x){return x.id!==id;});}saveCart();refreshCartUI();}
+
+function updateCartBadge(){
+  loadCart();
+  var n=cartCount();
+  document.querySelectorAll('.cart-count').forEach(function(el){
+    el.textContent=n;
+    el.style.display=n>0?'flex':'none';
+  });
+}
+
+function refreshCartUI(){
+  loadCart();
+  updateCartBadge();
+  var wrap=document.getElementById('cart-items');
+  if(!wrap)return;
+  if(cart.length===0){
+    wrap.innerHTML='<div class="cart-empty">Your cart is empty.<br>Browse our catalog and add products to get started.</div>';
+    document.getElementById('cart-total').textContent=fmt(0);
+    return;
+  }
+  var html='';
+  cart.forEach(function(item){
+    html+='<div class="cart-item">'
+      +'<img class="ci-img" src="'+item.img+'" alt="'+item.name+'">'
+      +'<div class="ci-info">'
+        +'<div class="ci-name">'+item.name+'</div>'
+        +'<div class="ci-origin">'+item.origin+'</div>'
+        +'<div class="ci-price">'+fmt(item.price)+'</div>'
+        +'<div class="ci-qty">'
+          +'<button class="q-btn" onclick="changeQty(\''+item.id+'\',-1)">-</button>'
+          +'<span class="q-val">'+item.qty+'</span>'
+          +'<button class="q-btn" onclick="changeQty(\''+item.id+'\',1)">+</button>'
+        +'</div>'
+      +'</div>'
+      +'<button class="ci-rm" onclick="removeFromCart(\''+item.id+'\')" title="Remove">x</button>'
+    +'</div>';
+  });
+  wrap.innerHTML=html;
+  document.getElementById('cart-total').textContent=fmt(cartTotal());
+  // Build WhatsApp order message
+  buildOrderLinks();
+}
+
+function buildOrderLinks(){
+  loadCart();
+  if(cart.length===0)return;
+  var lines=['Hello! I would like to place an order on GlobalMart:',''];
+  cart.forEach(function(item){
+    lines.push('- '+item.name+' x'+item.qty+' ('+fmt(item.price*item.qty)+')');
+  });
+  lines.push('');
+  lines.push('Order Total: '+fmt(cartTotal()));
+  lines.push('Please confirm availability and shipping to my location.');
+  var msg=encodeURIComponent(lines.join('\n'));
+  var waBtn=document.getElementById('wa-order-btn');
+  if(waBtn)waBtn.href='https://wa.me/26658001234?text='+msg;
+  var emailBtn=document.getElementById('email-order-btn');
+  if(emailBtn){
+    var subject=encodeURIComponent('Order from GlobalMart Website');
+    var body=encodeURIComponent(lines.join('\n'));
+    emailBtn.href='mailto:orders@globalmart.com?subject='+subject+'&body='+body;
+  }
+}
+
+function openCart(){refreshCartUI();document.getElementById('cart-side').classList.add('open');document.getElementById('cart-overlay').classList.add('open');}
+function closeCart(){document.getElementById('cart-side').classList.remove('open');document.getElementById('cart-overlay').classList.remove('open');}
+
+// ── INIT ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',function(){
+  try{var u=localStorage.getItem('gm_user');if(u)USER=JSON.parse(u);}catch(e){}
+  var loaded=false;
+  try{var raw=localStorage.getItem('gm_curr');if(raw){var d=JSON.parse(raw);C={code:d.code,symbol:d.symbol,rate:parseFloat(d.rate)||1,name:d.name,flag:d.flag||'🌍'};loaded=true;}}catch(e){}
+  applyPrices();
+  updateCurrUI();
+  updateCartBadge();
+  if(loaded&&C.code!=='USD'&&USER){
+    setTimeout(function(){showToast('Welcome back, <strong>'+USER.name+'</strong>! Prices shown in '+C.code);},600);
+  }
+});
+document.getElementById('nl-catalog').classList.add('active');
+function filt(btn,cat){document.querySelectorAll('.f-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');document.querySelectorAll('.pcard').forEach(function(c){c.style.display=(cat==='all'||c.dataset.c===cat)?'block':'none';});}
+</script>
+</body>
+</html>
